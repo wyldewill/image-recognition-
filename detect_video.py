@@ -31,8 +31,12 @@ vs = VideoStream(src=0).start()
 def updateThreshold(x):
         args["confidence"] = x/100
 
-cv2.namedWindow("uielements", cv2.WINDOW_NORMAL)
-cv2.createTrackbar("Threshold", 'uielements', int(args['confidence']*100), 100, updateThreshold)
+def updateSize(x):
+    args["width"] = x if x > 100 else 100
+
+cv2.namedWindow("Controls", cv2.WINDOW_NORMAL)
+cv2.createTrackbar("Threshold", 'Controls', int(args['confidence']*100), 100,  updateThreshold)
+cv2.createTrackbar("Size", 'Controls', int(args['width']),  1000,  updateSize)
 
 def drawFrame():
         frame = vs.read()
@@ -64,7 +68,8 @@ def drawFrame():
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 text = f"{label}: {int(r.score * 100)}%"
                 cv2.putText(orig, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
-                cv2.putText(orig, f"{int(args['confidence']*100)}% Threshold", (2, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 50, 256), 2)
+                thresh = args['confidence']
+                cv2.putText(orig, f"{int(thresh*100)}% Threshold", (args["width"]-130, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255*thresh, 255*(1-thresh)), 2)
 
 
         #update the window

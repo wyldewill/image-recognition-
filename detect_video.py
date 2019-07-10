@@ -6,9 +6,15 @@ import imutils
 import time
 import cv2
 import random
+import numpy as np
 
-def errorBox(message):
-        pass
+def dialogBox(title, text, width=200, height=130):
+    img = np.zeros((height, width, 3), np.uint8)
+    img[:,0:width] = (100, 100, 200)
+    cv2.putText(img, text, (0, height//2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10,10,10), 2)
+    cv2.imshow(title, img)
+    cv2.waitKey(0)
+
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", default="mobilenet_ssd_v2/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite", help="path to TensorFlow Lite object detection model")
@@ -30,7 +36,14 @@ model = DetectionEngine(args["model"])
 
 print("[INFO] starting video stream...")
 
-vs = VideoStream(src=0).start()
+try:
+        vs = VideoStream(src=0)
+        testVar = imutils.resize(vs.start().read(), width=args["width"])
+except Exception as e:
+        dialogBox("Error", str(e), width=1000)
+        quit()
+else:
+    vs = vs.start()
 
 def updateThreshold(x):
         args["confidence"] = x/100
@@ -54,10 +67,10 @@ def drawFrame():
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = Image.fromarray(frame)
 
-        start = time.time()
+        #start = time.time()
         results = model.DetectWithImage(frame, threshold=args["confidence"],
                 keep_aspect_ratio=True, relative_coord=False)
-        end = time.time()
+        #end = time.time()
 
         # loop over the results
         for r in results:
@@ -79,8 +92,15 @@ def drawFrame():
 
         #update the window
         cv2.imshow("Image Recognition", orig)
+
+def close():
+        # do a bit of cleanup
+        cv2.destroyAllWindows()
+        vs.stop()
+        dialogBox("Quitting", "Goodbye!")
 	
 #draw loop
+global looping
 looping = True
 
 while looping:
@@ -90,8 +110,5 @@ while looping:
         if key == ord("q"):
                 print("[INFO] quitting")
                 looping = False
+                close()
 
-# do a bit of cleanup
-cv2.destroyAllWindows()
-vs.stop()
-print("[INFO] stopped")

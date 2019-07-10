@@ -44,7 +44,8 @@ try:
         vs = VideoStream(src=0)
         testVar = imutils.resize(vs.start().read(), width=args["width"])
 except Exception as e:
-        dialogBox("Error", str(e), width=1000)
+        dialogBox("Error", "Plug In Camera!", width=1000)
+        print(e)
         quit()
 else:
     vs = vs.start()
@@ -94,7 +95,7 @@ def drawFrame():
 def close():
     cv2.destroyAllWindows()
     vs.stop
-    dialogBox("Quit", "Goodbye!", width=300)
+    #dialogBox("Quit", "Goodbye!", width=300)
     exit()
 
 #loop
@@ -103,7 +104,7 @@ looping = True
 while looping:
     drawFrame()
 
-    key = cv2.waitKey(1)
+    key = cv2.waitKey(0.5)
 
     if key == ord("q"):
         looping = False

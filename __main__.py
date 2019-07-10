@@ -1,4 +1,4 @@
-#Import Required Modules
+#Import Modules
 from edgetpu.detection.engine import DetectionEngine
 from imutils.video import VideoStream
 from PIL import Image
@@ -95,7 +95,6 @@ def drawFrame():
 def close():
     cv2.destroyAllWindows()
     vs.stop
-    #dialogBox("Quit", "Goodbye!", width=300)
     exit()
 
 #loop

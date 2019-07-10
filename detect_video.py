@@ -7,6 +7,9 @@ import time
 import cv2
 import random
 
+def errorBox(message):
+        pass
+
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", default="mobilenet_ssd_v2/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite", help="path to TensorFlow Lite object detection model")
 ap.add_argument("-l", "--labels", default="mobilenet_ssd_v2/coco_labels.txt", help="path to labels file")
@@ -26,6 +29,7 @@ print("[INFO] loading Coral model...")
 model = DetectionEngine(args["model"])
 
 print("[INFO] starting video stream...")
+
 vs = VideoStream(src=0).start()
 
 def updateThreshold(x):
@@ -68,8 +72,9 @@ def drawFrame():
                 y = startY - 15 if startY - 15 > 15 else startY + 15
                 text = f"{label}: {int(r.score * 100)}%"
                 cv2.putText(orig, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)
-                thresh = args['confidence']
-                cv2.putText(orig, f"{int(thresh*100)}% Threshold", (args["width"]-130, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255*thresh, 255*(1-thresh)), 2)
+
+        thresh = args['confidence']
+        cv2.putText(orig, f"{int(thresh*100)}% Threshold", (args["width"]-130, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255*thresh, 255*(1-thresh)), 2)
 
 
         #update the window

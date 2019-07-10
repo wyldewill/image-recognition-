@@ -1,4 +1,4 @@
-#Import Modules
+#Import Required Modules
 from edgetpu.detection.engine import DetectionEngine
 from imutils.video import VideoStream
 from PIL import Image

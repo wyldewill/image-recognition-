@@ -9,9 +9,7 @@ import cv2
 import random
 import numpy as np
 
-#test change
-
-#Parse Args
+# Parse Args
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", default="mobilenet_ssd_v2/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite", help="path to TensorFlow Lite object detection model")
 ap.add_argument("-l", "--labels", default="mobilenet_ssd_v2/coco_labels.txt", help="path to labels file")
@@ -19,7 +17,8 @@ ap.add_argument("-c", "--confidence", type=float, default=0.35, help="minimum pr
 ap.add_argument("-w", "--width", type=int, default=700, help="width of frame")
 args = vars(ap.parse_args())
 
-#Dialog Box Func
+
+# Dialog Box Func
 def dialogBox(title, text,  details="", width=400, height=100):
     img = np.zeros((height, width, 3), np.uint8)
     img[:,0:width] = (100, 100, 200)
@@ -28,43 +27,48 @@ def dialogBox(title, text,  details="", width=400, height=100):
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
-#Initialise
+
+# Initialise
 print("[INFO] parsing class labels...")
 labels = {}
 
 for row in open(args["labels"]):
-        # unpack the row and update the labels dictionary
-        (classID, label) = row.strip().split(maxsplit=1)
-        labels[int(classID)] = label.strip()
+    # unpack the row and update the labels dictionary
+    (classID, label) = row.strip().split(maxsplit=1)
+    labels[int(classID)] = label.strip()
 
 print("[INFO] loading Coral model...")
 model = DetectionEngine(args["model"])
 
 print("[INFO] starting video stream...")
 
-#Only Run If Camera Is Active
+# Only Run If Camera Is Active
 try:
-        vs = VideoStream(src=0)
-        testVar = imutils.resize(vs.start().read(), width=args["width"])
+    vs = VideoStream(src=0)
+    testVar = imutils.resize(vs.start().read(), width=args["width"])
 except Exception as e:
-        dialogBox("Error", "Can't Detect Camera!", details="plug camera in then restart the device", width=1000)
-        print(e)
-        quit()
+    dialogBox("Error", "Can't Detect Camera!", details="plug camera in then restart the device", width=1000)
+    print(e)
+    quit()
 else:
     vs = vs.start()
 
-#Control Panel
+
+# Control Panel
 def updateThreshold(x):
-        args["confidence"] = x/100
+    args["confidence"] = x/100
+
 
 def updateSize(x):
     args["width"] = x if x > 100 else 100
+
 
 cv2.namedWindow("Controls", cv2.WINDOW_NORMAL)
 cv2.createTrackbar("Threshold", 'Controls', int(args['confidence']*100), 100,  updateThreshold)
 cv2.createTrackbar("Size", 'Controls', int(args['width']),  1000,  updateSize)
 
-#Draw Func
+
+# Draw Func
 def drawFrame():
 
     thresh = args['confidence']
@@ -78,7 +82,7 @@ def drawFrame():
     frame = Image.fromarray(frame)
 
     results = model.DetectWithImage(frame, threshold=thresh,
-    keep_aspect_ratio=True, relative_coord=False)
+                                    keep_aspect_ratio=True, relative_coord=False)
 
     for r in results:
         box = r.bounding_box.flatten().astype("int")
@@ -95,12 +99,14 @@ def drawFrame():
 
     cv2.imshow("Image Recognition", orig)
 
+
 def close():
     cv2.destroyAllWindows()
     vs.stop
     exit()
 
-#loop
+
+# loop
 looping = True
 
 while looping:

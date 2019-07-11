@@ -90,7 +90,7 @@ def drawFrame():
         label = labels[r.label_id]
 
         colour = (0, 255*r.score, 255*(1-r.score))
-        #cv2.rectangle(orig, (startX, startY), (endX, endY), colour, 2)
+        cv2.rectangle(orig, (startX, startY), (endX, endY), colour, 2)
         y = startY - 15 if startY - 15 > 15 else startY + 15
         text = f"{label}: {int(r.score * 100)}%"
         cv2.putText(orig, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 2)

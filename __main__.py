@@ -18,10 +18,11 @@ ap.add_argument("-w", "--width", type=int, default=700, help="width of frame")
 args = vars(ap.parse_args())
 
 #Dialog Box Func
-def dialogBox(title, text, width=200, height=130):
+def dialogBox(title, text,  details="", width=400, height=100):
     img = np.zeros((height, width, 3), np.uint8)
     img[:,0:width] = (100, 100, 200)
-    cv2.putText(img, text, (0, height//2), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (10,10,10), 2)
+    cv2.putText(img, text, (0, height//2), cv2.FONT_HERSHEY_DUPLEX, 1, (10,10,10), 2)
+    cv2.putText(img, details, (0, (30+height//2)), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 2)
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
@@ -44,7 +45,7 @@ try:
         vs = VideoStream(src=0)
         testVar = imutils.resize(vs.start().read(), width=args["width"])
 except Exception as e:
-        dialogBox("Error", "Plug In Camera!", width=1000)
+        dialogBox("Error", "Can't Detect Camera!", details="plug camera in then restart the device", width=1000)
         print(e)
         quit()
 else:
@@ -103,7 +104,7 @@ looping = True
 while looping:
     drawFrame()
 
-    key = cv2.waitKey(0.5)
+    key = cv2.waitKey(1)
 
     if key == ord("q"):
         looping = False
